@@ -36,3 +36,5 @@ var.partition <- function(metacomm_tsdata){
 
 
 cv_test <- var.partition(sp_matrix)
+
+cv_test <- as.data.frame(cv_test)
