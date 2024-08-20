@@ -3,7 +3,7 @@
 
 source("code/sp_matrix.R")
 
-##testing out variance partitioning code
+##testing out variance partitioning code (from Wang et al., 2019, Ecography, 42: 1-12)
 
 var.partition <- function(metacomm_tsdata){
   ## The function "var.partition" performs the partitioning of variability
