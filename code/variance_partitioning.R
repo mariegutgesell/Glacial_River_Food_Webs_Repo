@@ -56,3 +56,17 @@ results_df <- do.call(rbind, lapply(names(cv_3), function(name) {
   spread(key = "Metric", value = "Value")
 
 
+##Spatial synchrony across organizational levels
+ggplot(results_df, aes(x = phi_S_L2R, y = phi_C_L2R)) +
+  geom_point() +
+  theme_classic() +
+  xlab("Species-level spatial synchrony") +
+  ylab("Community-level spatial synrchony")
+
+##Species synchrony across scales
+ggplot(results_df, aes(x = phi_S2C_L, y = phi_S2C_R, color = Combination)) +
+  geom_point() +
+  theme_classic() +
+  xlab("Local-scale species synchrony") +
+  ylab("Regional-scale species synrchony")
+
