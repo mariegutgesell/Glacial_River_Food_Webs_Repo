@@ -43,4 +43,16 @@ cv_all <- as.data.frame(cv_all)
 
 ##calculate CV and synchrony for only 3 sites (excluding mixed)
 cv_2 <- var.partition(sp_matrix_2)
+
 cv_2 <- as.data.frame(cv_2)
+
+##calculate CV and synchrony for each of the site combinations
+cv_3 <- lapply(xtabs_list, var.partition)
+results_df <- do.call(rbind, lapply(names(cv_3), function(name) {
+  data <- as.data.frame(cv_3[[name]])
+  cbind(Combination = name, Metric = rownames(data), data)
+})) %>%
+  rename(Value = "cv_3[[name]]") %>%
+  spread(key = "Metric", value = "Value")
+
+
