@@ -7,9 +7,13 @@ df <- read.csv("data/SEAK_Inverts_IndMeasure_AbunTakeMeanBL.csv")
   
 df$Date <- as.Date(df$Date, "%m/%d/%y")
 df <- df %>% mutate(Month_Year = format(Date, "%Y-%m"))
+
+df_na <- df %>%
+  filter(is.na(Biomass_Ind)) 
 ##Calculate total biomass of each family for each date
 df_summary <- df %>%
   select(StreamID, Month_Year, Date, Origin.x, Order.x, Family.x, Genus, Biomass_Ind) %>%
+  filter(!is.na(Biomass_Ind)) %>% ##why are there NAs? ask Matt
   group_by(StreamID, Month_Year, Date, Origin.x, Order.x, Family.x) %>% ##family is lowest level ID for all taxa
   summarise_at(vars(Biomass_Ind), list(total_biomass = sum)) %>%
   mutate(site_type = case_when(
@@ -19,13 +23,6 @@ df_summary <- df %>%
     startsWith(StreamID, "Montana") ~ "Mixed",
   )) %>%
   ungroup()
-
-
-##Plot time series of family biomass for each stream 
-ggplot(df_summary, aes(x = Date, y = total_biomass, color = Family.x)) +
-  geom_line() +
-  theme_classic() +
-  facet_wrap(~StreamID)
 
 
 # Ensure dataframe is in the correct format -- create array for variance partitioning function
@@ -55,33 +52,24 @@ xtabs_list <- list()
 
 #Loop through each combination and create an xtabs array
 for (i in 1:nrow(unique_combinations)) {
-  
-  # Get the current combination of sites
   combo <- unique_combinations[i, ]
   selected_sites <- c(combo$site1, combo$site2, combo$site3)
-  
-  # Count the occurrences of each site in the combination
+
   site_counts <- table(selected_sites)
   
-  # Initialize an empty dataframe to hold the replicated data
   replicated_data <- data.frame()
   
   #For each site in the combination, replicate its data based on how many times it occurs
   for (site in names(site_counts)) {
     count <- site_counts[[site]]
-    
-    # Filter the original dataframe for this site
     site_data <- df_summary_2[df_summary_2$StreamID == site, ]
     
     # Replicate the data according to how many times the site appears in the combination
     for (replicate_number in 1:count) {
-      # Create a copy of the site data and add the replicate number
+
       replicated_site_data <- site_data
-      
-      # Add the replicate type (1, 2, or 3)
       replicated_site_data$Replicate_Type <- replicate_number
-      
-      # Add the replicated data to the final dataframe
+
       replicated_data <- rbind(replicated_data, replicated_site_data) 
     }
 
@@ -91,7 +79,6 @@ for (i in 1:nrow(unique_combinations)) {
   #Create an xtabs array for the replicated dataframe
   xtabs_array <- xtabs(total_biomass ~ Family.x + Month_Year + streamID_2, data = replicated_data)
   
-  # Store the xtabs array in the list with a name based on the combination
   xtabs_list[[paste(combo$site1, combo$site2, combo$site3, sep = "_")]] <- xtabs_array
 }
 
