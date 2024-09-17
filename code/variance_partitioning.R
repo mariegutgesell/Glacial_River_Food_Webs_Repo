@@ -35,6 +35,12 @@ var.partition <- function(metacomm_tsdata){
 }
 
 
-cv_test <- var.partition(sp_matrix)
+##calculate CV and synchrony for all sites
+cv_all <- var.partition(sp_matrix_all)
 
-cv_test <- as.data.frame(cv_test)
+cv_all <- as.data.frame(cv_all)
+
+
+##calculate CV and synchrony for only 3 sites (excluding mixed)
+cv_2 <- var.partition(sp_matrix_2)
+cv_2 <- as.data.frame(cv_2)
