@@ -17,12 +17,12 @@ ggplot() +
   geom_line(data = df_summary, aes(x = Date, y = total_biomass, color = Family.x)) +
   geom_line(data = df_total, aes(x = Date, y = total_biomass)) + 
   geom_line() +
-  scale_y_log10()+
+ # scale_y_log10()+
   theme_classic() +
   facet_wrap(~StreamID)
 
 ggplot(df_total, aes(x = Date, y = total_biomass, color = site_type)) +
   geom_line()+
-  scale_y_log10() +
+  # scale_y_log10() +
   theme_classic()
 
