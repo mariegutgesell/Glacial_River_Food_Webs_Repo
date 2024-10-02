@@ -56,6 +56,16 @@ results_df <- do.call(rbind, lapply(names(cv_3), function(name) {
   spread(key = "Metric", value = "Value")
 
 
+##calculate CV and synchrony for each of the site combinations -- on standardized data
+cv_4 <- lapply(xtabs_list_std, var.partition)
+results_df_std <- do.call(rbind, lapply(names(cv_4), function(name) {
+  data <- as.data.frame(cv_4[[name]])
+  cbind(Combination = name, Metric = rownames(data), data)
+})) %>%
+  rename(Value = "cv_4[[name]]") %>%
+  spread(key = "Metric", value = "Value")
+
+
 ##Spatial synchrony across organizational levels
 ggplot(results_df, aes(x = phi_S_L2R, y = phi_C_L2R)) +
   geom_point() +
