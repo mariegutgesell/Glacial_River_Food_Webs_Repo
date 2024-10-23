@@ -91,7 +91,7 @@ df_summary_mean_sd <- df_summary %>%
 
 df_summary_std <- df_summary %>%
   left_join(df_summary_mean_sd, by = c("site_type", "StreamID", "Month_Year", "Date")) %>%
-  mutate(sp_total_biomass_std = ((sp_total_biomass - mean_sp_total_biomass)/sd_sp_total_biomass)+2) %>%
+  mutate(sp_total_biomass_std = ((sp_total_biomass - mean_sp_total_biomass)/sd_sp_total_biomass)+2) %>% ##added 2 to make all values positive
   filter(site_type != "Mixed")
 
 
