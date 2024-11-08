@@ -41,9 +41,13 @@ df_summary_2 <- df_summary_2 %>%
 sp_matrix_2 <- xtabs(sp_total_biomass ~ Family.x + Month_Year + StreamID, data = df_summary_2)
 
 
-saveRDS(sp_matrix_2, "data/intermediate_data/sp_matrix.rds")
-sp_matrix <- readRDS("data/intermediate_data/sp_matrix.rds")
-##Create a list of arrays with all unique possible site combinations (not including mixed site)
+saveRDS(sp_matrix_2, "data/intermediate_data/invert_sp_matrix.rds")
+#sp_matrix <- readRDS("data/intermediate_data/sp_matrix.rds")
+
+
+
+
+##Create a list of arrays with all unique possible site combinations (not including mixed site) --------
 sites <- unique(df_summary_2$StreamID)
 site_combinations <- expand.grid(site1 = sites, site2 = sites, site3 = sites)
 site_combinations_sorted <- t(apply(site_combinations, 1, sort))
