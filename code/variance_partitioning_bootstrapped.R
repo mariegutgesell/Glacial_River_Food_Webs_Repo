@@ -147,6 +147,8 @@ cv_diff <- summary_df %>%
 ##Plotting out some CV/synchrony results
 cv_diff$combo_type <- ordered(cv_diff$combo_type, levels = c("Homogenous", "2:1", "Heterogenous"))
 
+
+
 ##Metacommunity Stability 
 ggplot(cv_diff, aes(x = combo_type, y = CV_C_R_mean, group = Combo, fill = Combo)) +
   geom_bar(stat = "identity", position = "dodge", color = "black") +
@@ -154,6 +156,7 @@ ggplot(cv_diff, aes(x = combo_type, y = CV_C_R_mean, group = Combo, fill = Combo
   theme_classic() +
   labs(title = "Metacommunity Variability (CV-C,R) ")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 
 ##Local Community Stability 
 ggplot(cv_diff, aes(x = combo_type, y = CV_C_L_mean, group = Combo, fill = Combo)) +
@@ -236,3 +239,61 @@ ggplot(cv_diff, aes(x = combo_type, y = pop_cv_diff, group = Combo, fill = Combo
   theme_classic() +
   labs(title = "Population to Metapopulation CV Dampening")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+#########No summary of output ----- 
+##Just extracting the raw values from partition results
+partition_results_all <- do.call(rbind, lapply(partition_results, as.data.frame))
+
+partition_results_all <- partition_results_all %>%
+  rownames_to_column() %>%
+  separate(rowname, into = c("Iteration", "Metric"), sep = "\\.") 
+
+partition_results_all <- partition_results_all %>%
+  pivot_longer(cols = 3:12,
+               names_to = "Combo",
+               values_to = "Value") %>%
+  pivot_wider(names_from = Metric, values_from = Value) %>%
+  mutate(combo_type = case_when(
+    startsWith("Herbert.River_Herbert.River_Herbert.River", Combo) ~ "Homogenous",
+    startsWith("Herbert.River_Herbert.River_Peterson.Creek", Combo) ~ "2:1",
+    startsWith("Herbert.River_Herbert.River_Steep.Creek", Combo) ~ "2:1",
+    startsWith("Herbert.River_Peterson.Creek_Peterson.Creek", Combo) ~ "2:1",
+    startsWith("Herbert.River_Steep.Creek_Steep.Creek", Combo) ~ "2:1",
+    startsWith("Peterson.Creek_Steep.Creek_Steep.Creek", Combo) ~ "2:1",
+    startsWith("Peterson.Creek_Peterson.Creek_Steep.Creek", Combo) ~ "2:1",
+    startsWith("Steep.Creek_Steep.Creek_Steep.Creek", Combo) ~ "Homogenous",
+    startsWith("Peterson.Creek_Peterson.Creek_Peterson.Creek", Combo) ~ "Homogenous",
+    startsWith("Herbert.River_Peterson.Creek_Steep.Creek", Combo) ~ "Heterogenous",
+  ))
+
+
+##Metacommunity stability
+ggplot(partition_results_all, aes(x = combo_type, y = CV_C_R, group = combo_type, fill = combo_type)) +
+  geom_boxplot()+
+  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
+  theme_classic() +
+  labs(title = "Metacommunity Variability (CV-C,R) ")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+##Local Community stability
+ggplot(partition_results_all, aes(x = combo_type, y = CV_C_L, group = combo_type, fill = combo_type)) +
+  geom_boxplot()+
+  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
+  theme_classic() +
+  labs(title = "Local Community Variability (CV-C,L) ")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+##
+##Asynchrony -- community asynchrony local to regional -- driven by spatial community dissimilarity 
+##Is the spatial synchrony of total community biomass among local patches
+ggplot(partition_results_all, aes(x = combo_type, y = phi_C_L2R, group = combo_type, fill = combo_type)) +
+  geom_boxplot()+
+  theme_classic() +
+  labs(title = "Community Level Spatial Synchrony")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+sync_1_aov <- aov(phi_C_L2R ~ combo_type, data = partition_results_all)
+summary(sync_1_aov)
+TukeyHSD(sync_1_aov)
+
