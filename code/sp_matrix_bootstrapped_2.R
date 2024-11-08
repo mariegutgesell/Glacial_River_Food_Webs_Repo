@@ -1,4 +1,4 @@
-##Species matrix -- generating arrays from bootstrapped samples -- bootstrapped based on samples
+##Species matrix -- generating arrays from bootstrapped samples -- bootstrapped based on samples -- RIGHT CODE
 
 library(tidyverse)
 library(purrr)
@@ -11,7 +11,7 @@ df <- df %>% mutate(Month_Year = format(Date, "%Y-%m"))
 
 
 
-##Calculate total biomass of each family for each date
+##Calculate total biomass of each family for each date and surber sample 
 df_summary <- df %>%
   select(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x, Genus, Biomass_Ind) %>%
   filter(Origin.x == "Aquatic") %>%
