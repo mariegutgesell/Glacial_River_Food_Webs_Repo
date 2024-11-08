@@ -1,7 +1,11 @@
-##Partition Metacommunity Variation
+##Partition Metacommunity Variation -- Benthic inverts, non-bootstrapped samples 
 
 
+##Inverts:
 source("code/sp_matrix.R")
+
+
+
 
 ##testing out variance partitioning code (from Wang et al., 2019, Ecography, 42: 1-12)
 
