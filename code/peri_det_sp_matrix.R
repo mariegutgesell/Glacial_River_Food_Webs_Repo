@@ -64,12 +64,13 @@ for (i in 1:nrow(unique_combinations)) {
   replicated_data <- replicated_data %>%
     mutate(streamID_2 = paste(Site, Replicate_Type, sep = "_"))
   #Create an xtabs array for the replicated dataframe
-  xtabs_array <- xtabs(meanAFDM ~ Taxa + Month_Year + Site, data = replicated_data)
+  xtabs_array <- xtabs(meanAFDM ~ Taxa + Month_Year + streamID_2, data = replicated_data)
   
   peri_xtabs_list[[paste(combo$site1, combo$site2, combo$site3, sep = "_")]] <- xtabs_array
 }
 
-
+##need to fix so that all arrays have 3 levels 
+saveRDS(peri_xtabs_list, "data/intermediate_data/peri_sp_matrix_stacked_array.rds")
 ##Create a list of arrays with all unique possible site combinations (not including mixed site)-- DETRITUS --------
 sites <- unique(det_df$Site)
 site_combinations <- expand.grid(site1 = sites, site2 = sites, site3 = sites)
@@ -106,8 +107,9 @@ for (i in 1:nrow(unique_combinations)) {
   replicated_data <- replicated_data %>%
     mutate(streamID_2 = paste(Site, Replicate_Type, sep = "_"))
   #Create an xtabs array for the replicated dataframe
-  xtabs_array <- xtabs(meanAFDM_Area ~ Taxa + Month_Year + Site, data = replicated_data)
+  xtabs_array <- xtabs(meanAFDM_Area ~ Taxa + Month_Year + streamID_2, data = replicated_data)
   
   det_xtabs_list[[paste(combo$site1, combo$site2, combo$site3, sep = "_")]] <- xtabs_array
 }
 
+saveRDS(det_xtabs_list, "data/intermediate_data/det_sp_matrix_stacked_array.rds")
