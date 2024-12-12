@@ -265,34 +265,62 @@ partition_results_all <- partition_results_all %>%
     startsWith("Steep.Creek_Steep.Creek_Steep.Creek", Combo) ~ "Homogenous",
     startsWith("Peterson.Creek_Peterson.Creek_Peterson.Creek", Combo) ~ "Homogenous",
     startsWith("Herbert.River_Peterson.Creek_Steep.Creek", Combo) ~ "Heterogenous",
-  ))
+  )) %>%
+  mutate(cv_diff = CV_C_L - CV_C_R) %>%
+  mutate(taxa = "inverts")
 
+write.csv(partition_results_all, "data/variance_partitioning_results/invert_var_partition_results_bootstrapped.csv")
 
+partition_results_all$combo_type <- ordered(partition_results_all$combo_type, 
+                                            levels = c("Homogenous", "2:1", "Heterogenous"))
 ##Metacommunity stability
-ggplot(partition_results_all, aes(x = combo_type, y = CV_C_R, group = combo_type, fill = combo_type)) +
+invert_meta_cv <- ggplot(partition_results_all, aes(x = combo_type, y = CV_C_R, group = combo_type, fill = combo_type)) +
   geom_boxplot()+
   #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
   theme_classic() +
-  labs(title = "Metacommunity Variability (CV-C,R) ")+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ylab("Metacommunity Variability (CV-C,R)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+invert_meta_cv
 
 ##Local Community stability
-ggplot(partition_results_all, aes(x = combo_type, y = CV_C_L, group = combo_type, fill = combo_type)) +
+invert_local_cv <- ggplot(partition_results_all, aes(x = combo_type, y = CV_C_L, group = combo_type, fill = combo_type)) +
   geom_boxplot()+
   #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
   theme_classic() +
-  labs(title = "Local Community Variability (CV-C,L) ")+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ylab("Local Community Variability (CV-C,L) ")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+invert_local_cv
 
+invert_cv_diff <- ggplot(partition_results_all, aes(x = combo_type, y = cv_diff, group = combo_type, fill = combo_type)) +
+  geom_boxplot()+
+  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
+  theme_classic() +
+  ylab("Local to Metacommunity Stabilization \n(Metacommunity CV-Local Community CV)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+invert_cv_diff
 ##
 ##Asynchrony -- community asynchrony local to regional -- driven by spatial community dissimilarity 
 ##Is the spatial synchrony of total community biomass among local patches
-ggplot(partition_results_all, aes(x = combo_type, y = phi_C_L2R, group = combo_type, fill = combo_type)) +
+invert_comm_async <- ggplot(partition_results_all, aes(x = combo_type, y = phi_C_L2R, group = combo_type, fill = combo_type)) +
   geom_boxplot()+
   theme_classic() +
-  labs(title = "Community Level Spatial Synchrony")+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ylab("Community Level Spatial Synchrony")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+invert_comm_async
 
+##library
+library(ggpubr)
+
+##Final plot 
+
+
+
+invert_fig <- ggarrange(invert_meta_cv, invert_local_cv, invert_cv_diff, invert_comm_async, legend = "none", 
+                          labels = c("a)", "b)", "c)", "d)"),
+                          ncol = 2, nrow = 2, font.label = list(colour = "black", size = 14, family = "Times New Roman"))
+invert_fig
+
+invert_results <- ggarrange()
 sync_1_aov <- aov(phi_C_L2R ~ combo_type, data = partition_results_all)
 summary(sync_1_aov)
 TukeyHSD(sync_1_aov)
