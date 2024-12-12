@@ -140,15 +140,5 @@ non_empty_xtabs <- non_empty_xtabs[sapply(non_empty_xtabs, length) > 0]
 
 
 saveRDS(xtabs_list_collection, "data/intermediate_data/invert_sp_matrix_stacked_array_bootstrapped.rds")
-##test plotting a replicated id to see if its working properly
-
-replicated_data %>%
-  filter(Replicate_Type == 1) %>%
-  ggplot(aes(x = Date, y = sp_total_biomass, group = Sample_Number, color = Family.x)) +
-  geom_line() +
-  theme_classic() +
-  facet_wrap(~Family.x)
 
 
-
-##Mean bootstrapped 

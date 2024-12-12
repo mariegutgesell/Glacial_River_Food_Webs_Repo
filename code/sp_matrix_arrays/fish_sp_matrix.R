@@ -1,4 +1,6 @@
 ##Create species matrix arrays for fish
+##M.Gutgesell
+##Dec 12, 2024
 
 library(tidyverse)
 library(readxl)
@@ -17,7 +19,7 @@ fish_df <- fish_df %>% mutate(Month_Year = format(Date, "%Y-%m")) %>%
 fish_matrix <- xtabs(Biomass ~ Species + Month_Year + Stream, data = fish_df)
 
 
-##Create a list of arrays with all unique possible site combinations (not including mixed site)-- PERIPHYTON --------
+##Create a list of arrays with all unique possible site combinations (not including mixed site)-- Fish --------
 sites <- unique(fish_df$Stream)
 site_combinations <- expand.grid(site1 = sites, site2 = sites, site3 = sites)
 site_combinations_sorted <- t(apply(site_combinations, 1, sort))
@@ -59,3 +61,4 @@ for (i in 1:nrow(unique_combinations)) {
 }
 
 saveRDS(fish_xtabs_list, "data/intermediate_data/fish_sp_matrix_stacked_array.rds")
+
