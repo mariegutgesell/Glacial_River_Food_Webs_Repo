@@ -37,6 +37,7 @@ var.partition <- function(metacomm_tsdata){
 
 
 
+
 ##calculate CV and synchrony for each of the site combinations
 
 ##trying to get partitoning results for each of the 50 different arrays
@@ -123,18 +124,19 @@ partition_grouped_summary_df <- partition_grouped_summary_df[, c("Combo", "Varia
 summary_df <- partition_grouped_summary_df %>%
   pivot_wider(names_from = Variable, values_from = c(mean, standard_error), names_glue = "{Variable}_{.value}") %>%
   mutate(combo_type = case_when(
-    startsWith("Herbert River_Herbert River_Herbert River", Combo) ~ "Homogenous",
-    startsWith("Herbert River_Herbert River_Peterson Creek", Combo) ~ "2:1",
-    startsWith("Herbert River_Herbert River_Steep Creek", Combo) ~ "2:1",
-    startsWith("Herbert River_Peterson Creek_Peterson Creek", Combo) ~ "2:1",
-    startsWith("Herbert River_Steep Creek_Steep Creek", Combo) ~ "2:1",
-    startsWith("Peterson Creek_Steep Creek_Steep Creek", Combo) ~ "2:1",
-    startsWith("Peterson Creek_Peterson Creek_Steep Creek", Combo) ~ "2:1",
-    startsWith("Steep Creek_Steep Creek_Steep Creek", Combo) ~ "Homogenous",
-    startsWith("Peterson Creek_Peterson Creek_Peterson Creek", Combo) ~ "Homogenous",
-    startsWith("Herbert River_Peterson Creek_Steep Creek", Combo) ~ "Heterogenous",
+    startsWith(Combo, "Glacier-fed_Glacier-fed_Glacier-fed") ~ "Homogenous",
+    startsWith(Combo, "Glacier-fed_Glacier-fed_Rain-fed") ~ "2:1",
+    startsWith(Combo, "Glacier-fed_Glacier-fed_Snow-fed") ~ "2:1",
+    startsWith(Combo, "Glacier-fed_Rain-fed_Rain-fed") ~ "2:1",
+    startsWith(Combo, "Glacier-fed_Rain-fed_Snow-fed") ~ "Heterogenous",
+    startsWith(Combo, "Glacier-fed_Snow-fed_Snow-fed") ~ "2:1",
+    startsWith(Combo, "Rain-fed_Rain-fed_Rain-fed") ~ "Homogenous",
+    startsWith(Combo, "Rain-fed_Rain-fed_Snow-fed") ~ "2:1",
+    startsWith(Combo, "Rain-fed_Snow-fed_Snow-fed") ~ "2:1",
+    startsWith(Combo, "Snow-fed_Snow-fed_Snow-fed") ~ "Homogenous",
   ))
-
+  
+  
 
 ##stabilization from community to metacommunity CV
 cv_diff <- summary_df %>%
@@ -255,16 +257,16 @@ partition_results_all <- partition_results_all %>%
                values_to = "Value") %>%
   pivot_wider(names_from = Metric, values_from = Value) %>%
   mutate(combo_type = case_when(
-    startsWith("Herbert.River_Herbert.River_Herbert.River", Combo) ~ "Homogenous",
-    startsWith("Herbert.River_Herbert.River_Peterson.Creek", Combo) ~ "2:1",
-    startsWith("Herbert.River_Herbert.River_Steep.Creek", Combo) ~ "2:1",
-    startsWith("Herbert.River_Peterson.Creek_Peterson.Creek", Combo) ~ "2:1",
-    startsWith("Herbert.River_Steep.Creek_Steep.Creek", Combo) ~ "2:1",
-    startsWith("Peterson.Creek_Steep.Creek_Steep.Creek", Combo) ~ "2:1",
-    startsWith("Peterson.Creek_Peterson.Creek_Steep.Creek", Combo) ~ "2:1",
-    startsWith("Steep.Creek_Steep.Creek_Steep.Creek", Combo) ~ "Homogenous",
-    startsWith("Peterson.Creek_Peterson.Creek_Peterson.Creek", Combo) ~ "Homogenous",
-    startsWith("Herbert.River_Peterson.Creek_Steep.Creek", Combo) ~ "Heterogenous",
+    startsWith(Combo, "Glacier.fed_Glacier.fed_Glacier.fed") ~ "Homogenous",
+    startsWith(Combo, "Glacier.fed_Glacier.fed_Rain.fed") ~ "2:1",
+    startsWith(Combo, "Glacier.fed_Glacier.fed_Snow.fed") ~ "2:1",
+    startsWith(Combo, "Glacier.fed_Rain.fed_Rain.fed") ~ "2:1",
+    startsWith(Combo, "Glacier-fed_Rain-fed_Snow-fed") ~ "Heterogenous",
+    startsWith(Combo, "Glacier-fed_Snow-fed_Snow-fed") ~ "2:1",
+    startsWith(Combo, "Rain-fed_Rain-fed_Rain-fed") ~ "Homogenous",
+    startsWith(Combo, "Rain-fed_Rain-fed_Snow-fed") ~ "2:1",
+    startsWith(Combo, "Rain-fed_Snow-fed_Snow-fed") ~ "2:1",
+    startsWith(Combo, "Snow-fed_Snow-fed_Snow-fed") ~ "Homogenous",
   )) %>%
   mutate(cv_diff = CV_C_L - CV_C_R) %>%
   mutate(taxa = "inverts")

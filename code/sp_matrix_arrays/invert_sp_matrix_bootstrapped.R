@@ -18,9 +18,9 @@ df_summary <- df %>%
   group_by(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x) %>% ##family is lowest level ID for all taxa
   summarise_at(vars(Biomass_Ind), list(sp_total_biomass = sum)) %>%
   mutate(site_type = case_when(
-    startsWith(StreamID, "Herbert") ~ "Glacial",
-    startsWith(StreamID, "Steep") ~ "Snow",
-    startsWith(StreamID, "Peter") ~ "Rain", 
+    startsWith(StreamID, "Herbert") ~ "Glacier-fed",
+    startsWith(StreamID, "Steep") ~ "Snow-fed",
+    startsWith(StreamID, "Peter") ~ "Rain-fed", 
     startsWith(StreamID, "Montana") ~ "Mixed",
   )) %>%
   ungroup() %>%
@@ -60,7 +60,7 @@ test <- df_bootstrap %>%
   filter(Bootstrap_ID ==1)
 
 ##Create arrays for each bootstrapped community for each combination of sites
-sites <- unique(df_bootstrap$StreamID)
+sites <- unique(df_bootstrap$site_type)
 site_combinations <- expand.grid(site1 = sites, site2 = sites, site3 = sites)
 site_combinations_sorted <- t(apply(site_combinations, 1, sort))
 unique_combinations <- unique(as.data.frame(site_combinations_sorted))
@@ -92,7 +92,7 @@ for (n in 1:50) {
       count <- site_counts[[site]]
       
       # Filter the data for the current site
-      site_data <- df_bootstrap %>% filter(StreamID == site)
+      site_data <- df_bootstrap %>% filter(site_type == site)
       
       # Select unique Bootstrap_IDs for each repetition of the site
       if (nrow(site_data) > 0 && length(unique(site_data$Bootstrap_ID)) >= count) {
@@ -115,7 +115,7 @@ for (n in 1:50) {
     
     # Create a unique identifier for the combination of site and replicate
     replicated_data <- replicated_data %>%
-      mutate(streamID_2 = paste(StreamID, Replicate_Type, sep = "_"))
+      mutate(streamID_2 = paste(site_type, Replicate_Type, sep = "_"))
     
     # Create an xtabs array for the replicated dataframe
     if (nrow(replicated_data) > 0) {
@@ -138,6 +138,8 @@ non_empty_xtabs <- lapply(xtabs_list_collection, function(iteration_list) {
 non_empty_xtabs <- non_empty_xtabs[sapply(non_empty_xtabs, length) > 0]
 
 
+
+saveRDS(xtabs_list_collection, "data/intermediate_data/invert_sp_matrix_stacked_array_bootstrapped.rds")
 ##test plotting a replicated id to see if its working properly
 
 replicated_data %>%
