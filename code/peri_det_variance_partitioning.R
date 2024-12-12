@@ -115,23 +115,101 @@ det_results_df <- det_results_df %>%
   )) %>%
   mutate(taxa = "Detritus")
 
-results_df <- rbind(peri_results_df, det_results_df)
+results_df <- rbind(peri_results_df, det_results_df) %>%
+  mutate(cv_diff = CV_C_L - CV_C_R)
 
-##Metacommunity Variability
-ggplot(results_df, aes(x = combo_type, y = CV_C_R, group = combo_type, fill = combo_type)) +
+write.csv(results_df, "data/variance_partitioning_results/peri_det_var_partition_results.csv")
+
+results_df$combo_type <- ordered(results_df$combo_type, 
+        levels = c("Homogenous", "2:1", "Heterogenous"))
+
+## PERIPHYTON - Metacommunity Variability
+peri_meta_cv <- results_df %>%
+  filter(taxa== "Periphyton") %>%
+  ggplot(aes(x = combo_type, y = CV_C_R, group = combo_type, fill = combo_type)) +
   geom_boxplot() +
   theme_classic() +
-  facet_wrap(~taxa)
+  ylab("Metacommunity Variability (CV-C,R)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+peri_meta_cv
 
 ##Local community variability
-ggplot(results_df, aes(x = combo_type, y = CV_C_L, group = combo_type, fill = combo_type)) +
+peri_local_cv <- results_df %>%
+  filter(taxa== "Periphyton") %>%
+  ggplot(aes(x = combo_type, y = CV_C_L, group = combo_type, fill = combo_type)) +
   geom_boxplot() +
   theme_classic() +
-  facet_wrap(~taxa)
+  ylab("Local Community Variability (CV-C,L)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+peri_local_cv
 
-
-##Community spatial asynchrony 
-ggplot(results_df, aes(x = combo_type, y = phi_C_L2R, group = combo_type, fill = combo_type)) +
+peri_cv_diff <- results_df %>%
+  filter(taxa== "Periphyton") %>%
+  ggplot(aes(x = combo_type, y = cv_diff, group = combo_type, fill = combo_type)) +
   geom_boxplot() +
   theme_classic() +
-  facet_wrap(~taxa)
+  ylab("Local to Metacommunity Stabilization \n(Metacommunity CV-Local Community CV)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+peri_cv_diff
+
+peri_comm_async <- results_df %>%
+  filter(taxa== "Periphyton") %>%
+  ggplot(aes(x = combo_type, y = phi_C_L2R, group = combo_type, fill = combo_type)) +
+  geom_boxplot() +
+  theme_classic() +
+  ylab("Community Level Spatial Synchrony")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+peri_comm_async
+
+##final fig
+peri_fig <- ggarrange(peri_meta_cv, peri_local_cv, peri_cv_diff, peri_comm_async, legend = "none", 
+                        labels = c("a)", "b)", "c)", "d)"),
+                        ncol = 2, nrow = 2, font.label = list(colour = "black", size = 14, family = "Times New Roman"))
+peri_fig
+
+
+## DETRITUS- Metacommunity Variability
+det_meta_cv <- results_df %>%
+  filter(taxa== "Detritus") %>%
+  ggplot(aes(x = combo_type, y = CV_C_R, group = combo_type, fill = combo_type)) +
+  geom_boxplot() +
+  theme_classic() +
+  ylab("Metacommunity Variability (CV-C,R)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+det_meta_cv
+
+##Local community variability
+det_local_cv <- results_df %>%
+  filter(taxa== "Detritus") %>%
+  ggplot(aes(x = combo_type, y = CV_C_L, group = combo_type, fill = combo_type)) +
+  geom_boxplot() +
+  theme_classic() +
+  ylab("Local Community Variability (CV-C,L)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+det_local_cv
+
+det_cv_diff <- results_df %>%
+  filter(taxa== "Detritus") %>%
+  ggplot(aes(x = combo_type, y = cv_diff, group = combo_type, fill = combo_type)) +
+  geom_boxplot() +
+  theme_classic() +
+  ylab("Local to Metacommunity Stabilization \n(Metacommunity CV-Local Community CV)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+det_cv_diff
+
+det_comm_async <- results_df %>%
+  filter(taxa== "Detritus") %>%
+  ggplot(aes(x = combo_type, y = phi_C_L2R, group = combo_type, fill = combo_type)) +
+  geom_boxplot() +
+  theme_classic() +
+  ylab("Community Level Spatial Synchrony")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+det_comm_async
+
+##final fig
+det_fig <- ggarrange(det_meta_cv, det_local_cv, det_cv_diff, det_comm_async, legend = "none", 
+                      labels = c("a)", "b)", "c)", "d)"),
+                      ncol = 2, nrow = 2, font.label = list(colour = "black", size = 14, family = "Times New Roman"))
+det_fig
+
+

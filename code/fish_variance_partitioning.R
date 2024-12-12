@@ -89,8 +89,62 @@ results_df <- fish_results_df %>%
     startsWith(Combination, "Rain-fed_Rain-fed_Snow-fed") ~ "2:1",
     startsWith(Combination, "Rain-fed_Snow-fed_Snow-fed") ~ "2:1",
     startsWith(Combination, "Snow-fed_Snow-fed_Snow-fed") ~ "Homogenous",
-  )) 
+  )) %>%
+  mutate(cv_diff = CV_C_L - CV_C_R) %>%
+  mutate(taxa = "fish")
 
+write.csv(results_df, "data/variance_partitioning_results/fish_var_partition_results.csv")
+
+results_df$combo_type <- ordered(results_df$combo_type, 
+                                 levels = c("Homogenous", "2:1", "Heterogenous"))
+
+
+##Metacommunity stability
+fish_meta_cv <- ggplot(results_df, aes(x = combo_type, y = CV_C_R, group = combo_type, fill = combo_type)) +
+  geom_boxplot()+
+  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
+  theme_classic() +
+  ylab("Metacommunity Variability (CV-C,R)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+fish_meta_cv
+
+##Local Community stability
+fish_local_cv <- ggplot(results_df, aes(x = combo_type, y = CV_C_L, group = combo_type, fill = combo_type)) +
+  geom_boxplot()+
+  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
+  theme_classic() +
+  ylab("Local Community Variability (CV-C,L) ")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+fish_local_cv
+
+fish_cv_diff <- ggplot(results_df, aes(x = combo_type, y = cv_diff, group = combo_type, fill = combo_type)) +
+  geom_boxplot()+
+  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
+  theme_classic() +
+  ylab("Local to Metacommunity Stabilization \n(Metacommunity CV-Local Community CV)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+fish_cv_diff
+##
+##Asynchrony -- community asynchrony local to regional -- driven by spatial community dissimilarity 
+##Is the spatial synchrony of total community biomass among local patches
+fish_comm_async <- ggplot(results_df, aes(x = combo_type, y = phi_C_L2R, group = combo_type, fill = combo_type)) +
+  geom_boxplot()+
+  theme_classic() +
+  ylab("Community Level Spatial Synchrony")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
+fish_comm_async
+
+##library
+library(ggpubr)
+
+##Final plot 
+
+
+
+fish_fig <- ggarrange(fish_meta_cv, fish_local_cv, fish_cv_diff, fish_comm_async, legend = "none", 
+                        labels = c("a)", "b)", "c)", "d)"),
+                        ncol = 2, nrow = 2, font.label = list(colour = "black", size = 14, family = "Times New Roman"))
+fish_fig
 
 
 ##Metacommunity Variability
