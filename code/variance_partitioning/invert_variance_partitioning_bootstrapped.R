@@ -1,7 +1,9 @@
 ##Partition Metacommunity Variation
 
 
-source("code/sp_matrix_bootstrapped_2.R")
+source("code/sp_matrix_arrays/invert_sp_matrix_bootstrapped.R")
+
+rm(list = ls()[!ls() %in% c("xtabs_list_collection")])
 
 ##testing out variance partitioning code (from Wang et al., 2019, Ecography, 42: 1-12)
 
@@ -245,7 +247,8 @@ ggplot(cv_diff, aes(x = combo_type, y = pop_cv_diff, group = Combo, fill = Combo
 
 #########No summary of output ----- 
 ##Just extracting the raw values from partition results
-partition_results_all <- do.call(rbind, lapply(partition_results, as.data.frame))
+partition_results_all <- do.call(rbind, lapply(partition_results, as.data.frame)) 
+colnames(partition_results_all) <- gsub("\\.", "-", colnames(partition_results_all))  
 
 partition_results_all <- partition_results_all %>%
   rownames_to_column() %>%
@@ -257,10 +260,10 @@ partition_results_all <- partition_results_all %>%
                values_to = "Value") %>%
   pivot_wider(names_from = Metric, values_from = Value) %>%
   mutate(combo_type = case_when(
-    startsWith(Combo, "Glacier.fed_Glacier.fed_Glacier.fed") ~ "Homogenous",
-    startsWith(Combo, "Glacier.fed_Glacier.fed_Rain.fed") ~ "2:1",
-    startsWith(Combo, "Glacier.fed_Glacier.fed_Snow.fed") ~ "2:1",
-    startsWith(Combo, "Glacier.fed_Rain.fed_Rain.fed") ~ "2:1",
+    startsWith(Combo, "Glacier-fed_Glacier-fed_Glacier-fed") ~ "Homogenous",
+    startsWith(Combo, "Glacier-fed_Glacier-fed_Rain-fed") ~ "2:1",
+    startsWith(Combo, "Glacier-fed_Glacier-fed_Snow-fed") ~ "2:1",
+    startsWith(Combo, "Glacier-fed_Rain-fed_Rain-fed") ~ "2:1",
     startsWith(Combo, "Glacier-fed_Rain-fed_Snow-fed") ~ "Heterogenous",
     startsWith(Combo, "Glacier-fed_Snow-fed_Snow-fed") ~ "2:1",
     startsWith(Combo, "Rain-fed_Rain-fed_Rain-fed") ~ "Homogenous",

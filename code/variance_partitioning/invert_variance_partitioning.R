@@ -2,10 +2,10 @@
 
 
 ##Inverts:
-source("code/sp_matrix.R")
+source("code/sp_matrix_arrays/invert_sp_matrix.R")
 
 
-
+rm(list = ls()[!ls() %in% c("sp_matrix_2", "sp_matrix_all", "xtabs_list")])
 
 ##testing out variance partitioning code (from Wang et al., 2019, Ecography, 42: 1-12)
 
@@ -60,15 +60,6 @@ results_df <- do.call(rbind, lapply(names(cv_3), function(name) {
   rename(Value = "cv_3[[name]]") %>%
   spread(key = "Metric", value = "Value")
 
-
-##calculate CV and synchrony for each of the site combinations -- on standardized data
-cv_4 <- lapply(xtabs_list_std, var.partition)
-results_df_std <- do.call(rbind, lapply(names(cv_4), function(name) {
-  data <- as.data.frame(cv_4[[name]])
-  cbind(Combination = name, Metric = rownames(data), data)
-})) %>%
-  rename(Value = "cv_4[[name]]") %>%
-  spread(key = "Metric", value = "Value")
 
 
 ##Spatial synchrony across organizational levels

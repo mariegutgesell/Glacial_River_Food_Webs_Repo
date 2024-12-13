@@ -2,7 +2,7 @@
 
 
 #Perohpyton/detritus:
-source("code/peri_det_sp_matrix.R")
+source("code/sp_matrix_arrays/peri_det_sp_matrix.R")
 
 rm(list = ls()[!ls() %in% c("peri_matrix", "det_matrix", "det_xtabs_list", "peri_xtabs_list")])
 

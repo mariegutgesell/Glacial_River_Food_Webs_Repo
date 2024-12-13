@@ -2,7 +2,7 @@
 
 
 #Perohpyton/detritus:
-source("code/fish_sp_matrix.R")
+source("code/sp_matrix_arrays/fish_sp_matrix.R")
 
 
 rm(list = ls()[!ls() %in% c("fish_matrix", "fish_xtabs_list")])
