@@ -1,6 +1,6 @@
 ##Plotting seasonal insect community biomass
 
-source("code/sp_matrix.R")
+source("code/sp_matrix_arrays/invert_sp_matrix.R")
 ##Plot time series of family biomass for each stream 
 
 
