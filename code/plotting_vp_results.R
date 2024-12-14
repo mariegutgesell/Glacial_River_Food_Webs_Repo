@@ -181,7 +181,7 @@ meta_cv_2 <- ggplot(df_3, aes(x = combo_type, y = CV_C_R_mean, group = combo_typ
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   theme_classic() +
   ylab("Metacommunity \nVariability (CV-C,R)")+
-  theme(axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14),axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~taxa)
 meta_cv_2
 
@@ -201,7 +201,7 @@ local_cv_2 <- ggplot(df_3, aes(x = combo_type, y = CV_C_L_mean, group = combo_ty
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   theme_classic() +
   ylab("Local Community \nVariability (CV-C,R)")+
-  theme(axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14),axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~taxa)
 local_cv_2
 
@@ -221,7 +221,7 @@ cv_diff_2<- ggplot(df_3, aes(x = combo_type, y = cv_diff_mean, group = combo_typ
   theme_classic() +
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   ylab("Local to Metacommunity Stabilization \n(Metacommunity CV-Local Community CV)")+
-  theme(axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14),axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~taxa, nrow = 1)
 cv_diff_2
 
@@ -239,7 +239,7 @@ comm_async_2<- ggplot(df_3, aes(x = combo_type, y = phi_C_L2R_mean, group = comb
   theme_classic() +
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   ylab("Community Level \nSpatial Synchrony")+
-  theme(axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14), axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~taxa, nrow = 1)
 comm_async_2
 
@@ -295,7 +295,7 @@ meta_cv_2 <- ggplot(df_4, aes(x = combo_type, y = CV_C_R_mean, group = combo_typ
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   theme_classic() +
   ylab("Metacommunity \nVariability (CV-C,R)")+
-  theme(axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"),  strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14),axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"),  strip.text = element_blank()) +
   facet_wrap(~taxa)
 meta_cv_2
 
@@ -307,7 +307,7 @@ local_cv <- ggplot(df_4, aes(x = taxa, y = CV_C_L_mean, group = taxa, fill = tax
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   theme_classic() +
   ylab("Local Community \nVariability (CV-C,R)")+
-  theme( axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme( axis.title.y = element_text(size = 14),axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~combo_type)
 local_cv
 
@@ -317,7 +317,7 @@ local_cv_2 <- ggplot(df_4, aes(x = combo_type, y = CV_C_L_mean, group = combo_ty
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   theme_classic() +
   ylab("Local Community \nVariability (CV-C,R)")+
-  theme( axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14), axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~taxa)
 local_cv_2
 
@@ -328,7 +328,7 @@ cv_diff<- ggplot(df_4, aes(x = taxa, y = cv_diff_mean, group = taxa, fill = taxa
   theme_classic() +
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   ylab("Local to Metacommunity Stabilization \n(Metacommunity CV-Local Community CV)")+
-  theme( axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14), axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~combo_type, nrow = 1)
 cv_diff
 
@@ -338,7 +338,7 @@ cv_diff_2<- ggplot(df_4, aes(x = combo_type, y = cv_diff_mean, group = combo_typ
   theme_classic() +
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   ylab("Local to Metacommunity Stabilization \n(Metacommunity CV-Local Community CV)")+
-  theme( axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14), axis.title.x = element_blank(), legend.position = "right",text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~taxa, nrow = 1)
 cv_diff_2
 
@@ -350,7 +350,7 @@ comm_async<- ggplot(df_4, aes(x = taxa, y = phi_C_L2R_mean, group = taxa, fill =
   theme_classic() +
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   ylab("Community Level \nSpatial Synchrony")+
-  theme(axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14),axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~combo_type, nrow = 1)
 comm_async
 
@@ -360,7 +360,7 @@ comm_async_2<- ggplot(df_4, aes(x = combo_type, y = phi_C_L2R_mean, group = comb
   theme_classic() +
   scale_fill_manual(values = c("darkgreen",  "deepskyblue", "darksalmon"))+
   ylab("Community Level \nSpatial Synchrony")+
-  theme(axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
+  theme(axis.title.y = element_text(size = 14),axis.title.x = element_blank(), legend.position = "right", text = element_text(family = "Times New Roman"), strip.text = element_blank()) +
   facet_wrap(~taxa, nrow = 1)
 comm_async_2
 

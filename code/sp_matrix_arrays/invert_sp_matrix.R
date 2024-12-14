@@ -25,7 +25,8 @@ df_summary <- df %>%
     startsWith(StreamID, "Peter") ~ "Rain-fed", 
     startsWith(StreamID, "Montana") ~ "Mixed",
   )) %>%
-  ungroup()
+  ungroup() %>%
+  filter(Month_Year < "2019-01")
 
 df_na <- df_summary %>%
   filter(is.na(sp_total_biomass))

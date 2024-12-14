@@ -11,14 +11,16 @@ peri_df$Date <- as.Date(peri_df$Date, "%Y-%m-%d")
 peri_df <- peri_df %>% mutate(Month_Year = format(Date, "%Y-%m")) %>%
   filter(Site != "Transitional") %>%
   select(Site:Month_Year) %>%
-  mutate(Taxa = "Periphyton")
+  mutate(Taxa = "Periphyton") %>%
+  filter(Month_Year < "2019-01")
 ##for snow-fed, have two november sampling points, which one to use? 
 
 det_df$Date <- as.Date(det_df$Date, "%Y-%m-%d")
 det_df <- det_df %>% mutate(Month_Year = format(Date, "%Y-%m")) %>%
   filter(Site != "Transitional") %>%
   select(Site:Month_Year) %>%
-  mutate(Taxa = "Detritus")
+  mutate(Taxa = "Detritus") %>%
+  filter(Month_Year < "2019-01")
 
 
 peri_matrix <- xtabs(meanAFDM ~ Taxa + Month_Year + Site, data = peri_df)
@@ -113,3 +115,4 @@ for (i in 1:nrow(unique_combinations)) {
 }
 
 saveRDS(det_xtabs_list, "data/intermediate_data/det_sp_matrix_stacked_array.rds")
+

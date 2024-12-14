@@ -125,7 +125,7 @@ fish_df_total_biomass <- fish_df %>%
   summarise_at(vars(Freq), list(total_biomass = sum))
 
 library(lubridate)
-total_biomass_df$Month_Year <- as.Date(total_biomass_df$Month_Year, )
+
 
 total_biomass_df <- rbind(inverts_df_total_biomass, peri_df_total_biomass, det_df_total_biomass, fish_df_total_biomass) 
 total_biomass_df$month <- months(as.Date(paste("01", total_biomass_df$Month_Year, sep = "-"), format = "%d-%Y-%m"), abbr = TRUE)
@@ -538,7 +538,8 @@ fish_df <- fish_df %>% mutate(Month_Year = format(Date, "%Y-%m")) %>%
   filter(Stream != "Transitional") %>%
   group_by(Stream, Month_Year) %>%
   summarise_at(vars(Biomass), list(total_biomass = sum)) %>%
-  rename(site_type = "Stream") 
+  rename(site_type = "Stream") %>%
+  filter(Month_Year < "2019-01")
 
 fish_df$month <- months(as.Date(paste("01", fish_df$Month_Year, sep = "-"), format = "%d-%Y-%m"), abbr = TRUE)
 
@@ -659,7 +660,8 @@ invert_df_total <- df %>%
   ungroup()%>%
   group_by(site_type, StreamID, Month_Year, Date) %>%
   summarise_at(vars(sp_total_biomass), list(total_biomass = sum)) %>%
-  filter(site_type != "Mixed")
+  filter(site_type != "Mixed")%>%
+  filter(Month_Year < "2019-01")
 
 ##Homogenous 
 invert_homo_lc <- invert_df_total %>%
@@ -761,7 +763,8 @@ peri_df_total <- peri_df %>% mutate(Month_Year = format(Date, "%Y-%m")) %>%
   filter(Site != "Transitional") %>%
   select(Site:Month_Year) %>%
   mutate(Taxa = "Periphyton") %>%
-  rename(site_type = "Site", total_biomass = "meanAFDM")
+  rename(site_type = "Site", total_biomass = "meanAFDM") %>%
+  filter(Month_Year < "2019-01")
 
 
 ##Homogenous 

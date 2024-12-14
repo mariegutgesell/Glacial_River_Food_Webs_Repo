@@ -24,7 +24,8 @@ df_summary <- df %>%
     startsWith(StreamID, "Montana") ~ "Mixed",
   )) %>%
   ungroup() %>%
-  filter(site_type != "Mixed")
+  filter(site_type != "Mixed") %>%
+  filter(Month_Year < "2019-01")
 
 ##Create bootstrap dataframes, selecting 5 surber samples randomly 
 bootstrap_sample <- function(df) {

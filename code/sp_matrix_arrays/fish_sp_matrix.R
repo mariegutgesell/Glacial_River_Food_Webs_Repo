@@ -12,7 +12,8 @@ fish_df <- read_excel("data/SEAK_Fish_Biomass_Supplement.xlsx")
 ##Add month_date to standardize to sampling month 
 fish_df$Date <- as.Date(fish_df$Date, "%Y-%m-%d")
 fish_df <- fish_df %>% mutate(Month_Year = format(Date, "%Y-%m")) %>%
-  filter(Stream != "Transitional") 
+  filter(Stream != "Transitional") %>%
+  filter(Month_Year < "2019-01")
 
 
 
