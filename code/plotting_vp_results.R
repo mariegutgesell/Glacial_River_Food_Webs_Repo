@@ -10,8 +10,8 @@ inverts <- read.csv("data/variance_partitioning_results/invert_var_partition_res
   rename(Combination = "Combo") %>%
   select(taxa, Iteration, Combination, combo_type, CV_C_L, CV_C_R, CV_S_L, CV_S_R, phi_C_L2R, phi_S_L2R, phi_S2C_L, phi_S2C_R, cv_diff)
 
-pd <- read.csv("data/variance_partitioning_results/peri_det_var_partition_results.csv") %>%
-  mutate(Iteration = 1) %>%
+pd <- read.csv("data/variance_partitioning_results/peri_var_partition_results_bootstrapped.csv") %>%
+  rename(Combination = "Combo") %>%
   select(taxa, Iteration, Combination, combo_type, CV_C_L, CV_C_R, CV_S_L, CV_S_R, phi_C_L2R, phi_S_L2R, phi_S2C_L, phi_S2C_R, cv_diff)
 
 fish <- read.csv("data/variance_partitioning_results/fish_var_partition_results.csv") %>%
@@ -257,6 +257,8 @@ meta_local_cv_2
 
 final_fig <- ggarrange(meta_local_cv_2, cv_diff_2, legend = "none", ncol = 2, nrow = 1)
 final_fig
+
+
 ##Plotting column chart of mean w/ standard deviation -- for all combinations ---------------------
 standard_error <- function(x) {
   sd(x, na.rm = TRUE) / sqrt(length(na.omit(x)))
