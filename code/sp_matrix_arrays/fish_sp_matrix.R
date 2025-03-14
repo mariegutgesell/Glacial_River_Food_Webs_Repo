@@ -5,7 +5,7 @@
 library(tidyverse)
 library(readxl)
 
-fish_df <- read_excel("data/SEAK_Fish_Biomass_Supplement.xlsx")
+fish_df_2 <- read_excel("data/SEAK_Fish_Biomass_Supplement.xlsx")
 
 
 

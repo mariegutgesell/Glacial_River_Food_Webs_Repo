@@ -10,13 +10,49 @@ df$Date <- as.Date(df$Date, "%m/%d/%y")
 df <- df %>% mutate(Month_Year = format(Date, "%Y-%m"))
 
 
+##NEED TO STANDARDIZE BIOMASS TO M2
+##I think this data is just individual level biomass estimates for everything in sample 
+##need to standardize to m2 based on subsample volume and area of benthic habitat sampled -- need this information 
+##note: Biomass = a*BodyLength^b - calculated at individual level - but i think still need to scale this to m2 
+
+##Standardizing biomass
+##first split large-rare from small
+lr <- df %>%
+  filter(Large_Rare == "LR") %>%
+  select(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x, Genus, Taxon, Biomass_Ind, Large_Rare) %>%
+  rename(sp_total_biomass = "Biomass_Ind") %>%
+  mutate(n_individuals_total = 1) %>%
+  select(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x, Taxon, Large_Rare, sp_total_biomass, n_individuals_total)
+
+nlr <- df %>%
+  filter(Large_Rare != "LR") %>%
+  select(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x, Genus, Taxon, Biomass_Ind, Large_Rare) %>%
+  #  filter(Origin.x == "Aquatic") %>%
+  group_by(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x, Taxon, Large_Rare) %>% ##family is lowest level ID for all taxa
+  summarise(
+    sp_biomass_subsample = sum(Biomass_Ind, na.rm = TRUE),
+    n_individuals = n()
+  ) %>%
+  mutate(sp_total_biomass = sp_biomass_subsample*8,
+         n_individuals_total = n_individuals*8)
+
+nlr_2 <- nlr %>%
+  select(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x, Taxon, Large_Rare, sp_total_biomass, n_individuals_total)
+
+##Bind back together
+df_2 <- rbind(lr, nlr_2)
+##this is now the biomass per .75m2 
+
+##look at differences in family/taxon 
 
 ##Calculate total biomass of each family for each date and surber sample 
-df_summary <- df %>%
-  select(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x, Genus, Biomass_Ind) %>%
+df_summary <- df_2 %>%
   filter(Origin.x == "Aquatic") %>%
   group_by(StreamID, Month_Year, Date, Sample_Number, Origin.x, Order.x, Family.x) %>% ##family is lowest level ID for all taxa
-  summarise_at(vars(Biomass_Ind), list(sp_total_biomass = sum)) %>%
+  summarise(
+    sp_biomass_0.75m2 = sum(sp_total_biomass, na.rm = TRUE),
+    n_individuals_0.75m2 = sum(n_individuals_total)
+  ) %>%
   mutate(site_type = case_when(
     startsWith(StreamID, "Herbert") ~ "Glacier-fed",
     startsWith(StreamID, "Steep") ~ "Snow-fed",
@@ -26,6 +62,42 @@ df_summary <- df %>%
   ungroup() %>%
   filter(site_type != "Mixed") %>%
   filter(Month_Year < "2019-01")
+
+
+
+##testing 
+t1 <- df %>%
+  filter(StreamID == "Herbert River", Family.x == "Acari")
+
+
+mean_biomass <- df_summary %>%
+  group_by(StreamID, site_type, Month_Year, Date,  Family.x, Taxon) %>%
+  summarise_at(vars(sp_total_biomass), list(mean = mean, sd = sd))
+
+
+##test to see if there is overlap w/ the bootstrapped data provided
+md_bs <- read.csv("data/SEAK_Invertebrates_BootstrappedBiomass_Summary.csv") %>%
+  select(StreamID:mean)
+
+md_bs$Month_Year <- str_replace_all(md_bs$monthyear, 
+                                 c("Jan" = "01", "Feb" = "02", "Mar" = "03", "Apr" = "04",
+                                   "May" = "05", "Jun" = "06", "Jul" = "07", "Aug" = "08",
+                                   "Sep" = "09", "Oct" = "10", "Nov" = "11", "Dec" = "12"))
+
+
+test1 <- inner_join(mean_biomass, md_bs, by = c("StreamID", "Family.x",  "Month_Year"))
+
+ggplot(test1, aes(x = mean.x, y = mean.y)) +
+  geom_point()
+
+##mean biomasses from where there is overlap is very correlated, few minor points off line
+
+test2 <- left_join(md_bs, mean_biomass,by = c("StreamID", "Family.x",  "Month_Year") ) %>%
+  rename(mean_bootstrapped_df = "mean.x", mean_raw_df = "mean.y") %>%
+  filter(StreamID != "Montana Creek")
+
+write.csv(test2, "invert_data_overlap.csv")
+##there is a lot of non-overlapping data here, need to talk to matt to make sure i ahve the most updated raw data 
 
 ##Create bootstrap dataframes, selecting 5 surber samples randomly 
 bootstrap_sample <- function(df) {
@@ -120,7 +192,7 @@ for (n in 1:50) {
     
     # Create an xtabs array for the replicated dataframe
     if (nrow(replicated_data) > 0) {
-      xtabs_array <- xtabs(sp_total_biomass ~ Family.x + Month_Year + streamID_2, data = replicated_data)
+      xtabs_array <- xtabs(sp_biomass_0.75m2 ~ Family.x + Month_Year + streamID_2, data = replicated_data)
       xtabs_list_bs[[paste(combo$site1, combo$site2, combo$site3, sep = "_")]] <- xtabs_array
     }
   }

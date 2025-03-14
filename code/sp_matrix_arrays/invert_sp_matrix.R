@@ -3,15 +3,25 @@
 ##Nov 13, 2024
 
 library(tidyverse)
+library(lubridate)
 
 ##Read in benthic invert data
 df <- read.csv("data/SEAK_Inverts_IndMeasure_AbunTakeMean_Repaired.csv") 
   
+##note: Biomass = a*BodyLength^b - calculated at individual level 
 df$Date <- as.Date(df$Date, "%m/%d/%y")
 df <- df %>% mutate(Month_Year = format(Date, "%Y-%m"))
 
 df_na <- df %>%
   filter(is.na(Biomass_Ind)) 
+
+
+test <- df %>%
+  filter(StreamID == "Steep Creek", Month_Year == "2018-04") %>%
+  group_by(Sample_Number, Order.x, Family.x) %>%
+  count()
+
+
 
 ##Calculate total biomass of each family for each date
 df_summary <- df %>%
