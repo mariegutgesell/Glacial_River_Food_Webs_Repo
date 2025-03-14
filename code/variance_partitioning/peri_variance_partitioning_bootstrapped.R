@@ -1,7 +1,7 @@
-##Partition Metacommunity Variation
+##Partition Metacommunity Variation -- Periphyton, bootstrapped community biomass estimates 
 
 
-source("code/sp_matrix_arrays/invert_sp_matrix_bootstrapped.R")
+source("code/sp_matrix_arrays/peri_sp_matrix_bootstrapped.R")
 
 rm(list = ls()[!ls() %in% c("xtabs_list_collection")])
 
@@ -32,8 +32,7 @@ var.partition <- function(metacomm_tsdata){
   phi_S2C_R <- CV_C_R/CV_S_R
   partition_3level <- c(CV_S_L=CV_S_L, CV_C_L=CV_C_L, CV_S_R=CV_S_R, CV_C_R=CV_C_R,
                         phi_S_L2R=phi_S_L2R, phi_C_L2R=phi_C_L2R, phi_S2C_L=phi_S2C_L,
-                        phi_S2C_R=phi_S2C_R,
-                        mean_metacom = mean_metacom, sd_metacom = sd_metacom)
+                        phi_S2C_R=phi_S2C_R)
   return(partition_3level)
 }
 
@@ -50,11 +49,11 @@ for(n in 1:50) {
   current_xtabs_list <- xtabs_list_collection[[paste0("Iteration_", n)]]
   
   iteration_results <- list()
-    for(combo in names(current_xtabs_list)) {
-      df <- current_xtabs_list[[combo]]
-      partition_result <- var.partition(df)
-      iteration_results[[combo]] <- partition_result
-    }
+  for(combo in names(current_xtabs_list)) {
+    df <- current_xtabs_list[[combo]]
+    partition_result <- var.partition(df)
+    iteration_results[[combo]] <- partition_result
+  }
   partition_results[[paste0("Iteration_", n)]] <- iteration_results
   
   
@@ -138,8 +137,8 @@ summary_df <- partition_grouped_summary_df %>%
     startsWith(Combo, "Rain-fed_Snow-fed_Snow-fed") ~ "2:1",
     startsWith(Combo, "Snow-fed_Snow-fed_Snow-fed") ~ "Homogenous",
   ))
-  
-  
+
+
 
 ##stabilization from community to metacommunity CV
 cv_diff <- summary_df %>%
@@ -174,7 +173,7 @@ ggplot(cv_diff, aes(x = combo_type, y = CV_C_L_mean, group = Combo, fill = Combo
 ##CV dampening
 ggplot(cv_diff, aes(x = combo_type, y = comm_cv_diff, group = Combo, fill = Combo)) +
   geom_bar(stat = "identity", position = "dodge", color = "black") +
-#  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
+  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
   theme_classic() +
   labs(title = "Community to Metacommunity CV Dampening ")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -240,7 +239,7 @@ ggplot(cv_diff, aes(x = combo_type, y = phi_S2C_R_mean, group = Combo, fill = Co
 ##Population level CV dampening -- from metapopulation to population
 ggplot(cv_diff, aes(x = combo_type, y = pop_cv_diff, group = Combo, fill = Combo)) +
   geom_bar(stat = "identity", position = "dodge", color = "black") +
- # geom_errorbar(aes(ymin = phi_S_L2R_mean - phi_S_L2R_standard_error, ymax = phi_S_L2R_mean + phi_C_L2R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
+  # geom_errorbar(aes(ymin = phi_S_L2R_mean - phi_S_L2R_standard_error, ymax = phi_S_L2R_mean + phi_C_L2R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
   theme_classic() +
   labs(title = "Population to Metapopulation CV Dampening")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -273,9 +272,9 @@ partition_results_all <- partition_results_all %>%
     startsWith(Combo, "Snow-fed_Snow-fed_Snow-fed") ~ "Homogenous",
   )) %>%
   mutate(cv_diff = CV_C_L - CV_C_R) %>%
-  mutate(taxa = "inverts")
+  mutate(taxa = "Periphyton")
 
-write.csv(partition_results_all, "data/variance_partitioning_results/invert_var_partition_results_bootstrapped.csv")
+write.csv(partition_results_all, "data/variance_partitioning_results/peri_var_partition_results_bootstrapped.csv")
 
 partition_results_all$combo_type <- ordered(partition_results_all$combo_type, 
                                             levels = c("Homogenous", "2:1", "Heterogenous"))
@@ -288,24 +287,6 @@ invert_meta_cv <- ggplot(partition_results_all, aes(x = combo_type, y = CV_C_R, 
   theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
 invert_meta_cv
 
-##invert mean 
-invert_meta_mean <- ggplot(partition_results_all, aes(x = combo_type, y = mean_metacom, group = combo_type, fill = combo_type)) +
-  geom_boxplot()+
-  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
-  theme_classic() +
-  ylab("Metacommunity Mean")+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
-invert_meta_mean
-
-invert_meta_sd <- ggplot(partition_results_all, aes(x = combo_type, y = sd_metacom, group = combo_type, fill = combo_type)) +
-  geom_boxplot()+
-  #  geom_errorbar(aes(ymin = CV_C_R_mean - CV_C_R_standard_error, ymax = CV_C_R_mean + CV_C_R_standard_error), position = position_dodge(width = 0.9), width = 0.25)+
-  theme_classic() +
-  ylab("Metacommunity SD")+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank(), legend.position = "none")
-invert_meta_sd
-
-##this looks fucked, something is not right.... 
 ##Local Community stability
 invert_local_cv <- ggplot(partition_results_all, aes(x = combo_type, y = CV_C_L, group = combo_type, fill = combo_type)) +
   geom_boxplot()+
@@ -340,8 +321,8 @@ library(ggpubr)
 
 
 invert_fig <- ggarrange(invert_meta_cv, invert_local_cv, invert_cv_diff, invert_comm_async, legend = "none", 
-                          labels = c("a)", "b)", "c)", "d)"),
-                          ncol = 2, nrow = 2, font.label = list(colour = "black", size = 14, family = "Times New Roman"))
+                        labels = c("a)", "b)", "c)", "d)"),
+                        ncol = 2, nrow = 2, font.label = list(colour = "black", size = 14, family = "Times New Roman"))
 invert_fig
 
 invert_results <- ggarrange()
