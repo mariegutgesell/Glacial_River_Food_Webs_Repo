@@ -120,5 +120,5 @@ for (n in 1:50) {
   fish_xtabs_list_collection[[paste0("Iteration_", n)]] <- xtabs_list_bs 
 }
 
-saveRDS(fish_xtabs_list, "data/intermediate_data/fish_sp_matrix_stacked_array_bootstrapped.rds")
+saveRDS(fish_xtabs_list_collection, "data/intermediate_data/fish_sp_matrix_stacked_array_bootstrapped.rds")
 
